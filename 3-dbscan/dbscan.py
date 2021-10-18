@@ -12,51 +12,51 @@ def dbscan(points, eps, min_points):
     for i in range(0, len(points)):
         if not (labels[i] == 0):
             continue
-        neighbors = find_neighbors(points, i, eps)
-        if len(neighbors) < min_points:
+        neighbours = find_neighbors(points, i, eps)
+        if len(neighbours) < min_points:
             labels[i] = -1
         else:
             cluster_id += 1
-            create_cluster(points, labels, i, neighbors, cluster_id, eps, min_points)
+            create_cluster(points, labels, i, neighbours, cluster_id, eps, min_points)
 
     return labels
 
 
 def find_neighbors(points, cent_point_id, eps):
-    neighbors = []
+    neighbours = []
     for point in range(0, len(points)):
         if dist(points[cent_point_id], points[point]) < eps:
-            neighbors.append(point)
-    return neighbors
+            neighbours.append(point)
+    return neighbours
 
 
-def create_cluster(points, labels, cent_point_id, cent_point_neighbors, cluster_id, eps, min_points):
+def create_cluster(points, labels, cent_point_id, cent_point_neighbours, cluster_id, eps, min_points):
     labels[cent_point_id] = cluster_id
     i = 0
-    while i < len(cent_point_neighbors):
-        point = cent_point_neighbors[i]
+    while i < len(cent_point_neighbours):
+        point = cent_point_neighbours[i]
         if labels[point] == -1:
             labels[point] = cluster_id
         elif labels[point] == 0:
             labels[point] = cluster_id
-            point_neighbors = find_neighbors(points, point, eps)
-            if len(point_neighbors) >= min_points:
-                cent_point_neighbors = cent_point_neighbors + point_neighbors
+            point_neighbours = find_neighbors(points, point, eps)
+            if len(point_neighbours) >= min_points:
+                cent_point_neighbours = cent_point_neighbours + point_neighbours
         i += 1
 
 
 def draw_circles(points, cluster_ids):
     for point, cluster_id in zip(points, cluster_ids):
+        width = 0
         if cluster_id == -1:
-            pygame.draw.circle(screen, colors[cluster_id], point, circle_radius, empty_width)
-        else:
-            pygame.draw.circle(screen, colors[cluster_id], point, circle_radius)
+            width = empty_width
+        pygame.draw.circle(screen, colors[cluster_id], point, circle_radius, width)
 
 
 if __name__ == '__main__':
     # dbscan params
     eps = 30
-    min_points = 2
+    min_points = 3
 
     # pygame params
     window_width = 1280
