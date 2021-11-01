@@ -12,17 +12,16 @@ def dbscan(points, eps, min_points):
     for i in range(0, len(points)):
         if not (labels[i] == 0):
             continue
-        neighbours = find_neighbors(points, i, eps)
+        neighbours = find_neighbours(points, i, eps)
         if len(neighbours) < min_points:
             labels[i] = -1
         else:
             cluster_id += 1
             create_cluster(points, labels, i, neighbours, cluster_id, eps, min_points)
-
     return labels
 
 
-def find_neighbors(points, cent_point_id, eps):
+def find_neighbours(points, cent_point_id, eps):
     neighbours = []
     for point in range(0, len(points)):
         if dist(points[cent_point_id], points[point]) < eps:
@@ -39,7 +38,7 @@ def create_cluster(points, labels, cent_point_id, cent_point_neighbours, cluster
             labels[point] = cluster_id
         elif labels[point] == 0:
             labels[point] = cluster_id
-            point_neighbours = find_neighbors(points, point, eps)
+            point_neighbours = find_neighbours(points, point, eps)
             if len(point_neighbours) >= min_points:
                 cent_point_neighbours = cent_point_neighbours + point_neighbours
         i += 1
@@ -74,8 +73,8 @@ if __name__ == '__main__':
     colors = []
     for i in range(1, 255):
         colors.append(tuple(np.random.choice(range(256), size=3)))
-    red = (255, 0, 0)
-    colors.append(red)
+    grey = (123, 123, 123)
+    colors.append(grey)
 
     points = []
     q = False
@@ -84,8 +83,15 @@ if __name__ == '__main__':
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 q = True
-            if event.type == pygame.MOUSEBUTTONDOWN:
+            if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
+                q = True
+            if event.type == pygame.KEYDOWN and event.key == pygame.K_r:
+                points = []
+                screen.fill(white)
+            if pygame.mouse.get_pressed()[0]:
                 points.append(pygame.mouse.get_pos())
+                pygame.draw.circle(screen, colors[-1], points[-1], circle_radius, empty_width)
+            if event.type == pygame.KEYDOWN and event.key == pygame.K_q:
                 cluster_ids = dbscan(np.array(points), eps, min_points)
                 screen.fill(white)
                 draw_circles(points, cluster_ids)
