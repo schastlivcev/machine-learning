@@ -125,6 +125,9 @@ class Scene:
                     self.curr_point = pygame.mouse.get_pos()
                     if self.still_training:
                         if self.curr_cluster != 0:
+                            knn.fit(self.points, self.clusters)
+                            pred, optimal_k = knn.predict_cluster([self.curr_point], True)
+                            self.k = optimal_k
                             self.add_point(self.curr_cluster)
                     else:
                         knn.fit(self.points, self.clusters)
